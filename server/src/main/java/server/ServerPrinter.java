@@ -1,13 +1,13 @@
-package client;
+package server;
 
 import java.io.*;
 
-public class ClientPrinter implements Runnable {
-    DataOutputStream outVersoServer;// stream output
+public class ServerPrinter implements Runnable {
+    DataOutputStream outVersoClient;// output stream verso client
     BufferedReader tastiera;// buffered per memorizzare la stringa ottenuta da tastiera
-    String stringaUtente;// stringa inserita dal client
+    String stringaModificata;// stringa di risposta
 
-    public ClientPrinter(DataOutputStream outVersoServer)  {
+    public ServerPrinter(DataOutputStream outVersoServer)  {
         this.outVersoServer = outVersoServer;
 
     }

@@ -1,4 +1,4 @@
-package clientserverchat;
+package client;
 
 /**
  *
