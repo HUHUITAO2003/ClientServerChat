@@ -9,11 +9,28 @@ public class Array {
 
     }
 
-    public void aggiungi(ServerThread serverThread){
+    public void aggiungiServer(ServerThread serverThread){
         a.add(serverThread);
     }
 
+    public boolean aggiungiClient(String nome){
+        for(int i=0; i < a.size(); i++){
+            if(a.get(i).NomeClient.equals(nome)){
+                return true;
+            }
+        }
+        return false;
+    }
     
+    public String lista(String nome){
+        String listaclient = null;
+        for(int i=0; i < a.size(); i++){
+            if(!a.get(i).NomeClient.equals(nome)){
+                listaclient+=a.get(i).NomeClient+";";
+            }
+        }
+        return listaclient;
+    }
 
     public void stoppa(){
         for(int i=0; i < a.size(); i++){

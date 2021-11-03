@@ -18,7 +18,7 @@ public class MultiServer{
                 Socket socket = serverSocket.accept();//connessione tra client e server
                 System.out.println("3 Server socket " + socket);
                 ServerThread serverThread = new ServerThread(socket, serverSocket, a);
-                a.aggiungi(serverThread);
+                a.aggiungiServer(serverThread);
                 serverThread.start();
             }
         } catch (Exception e) {
