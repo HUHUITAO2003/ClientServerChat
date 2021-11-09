@@ -2,27 +2,28 @@ package server;
 
 import java.io.*;
 import java.net.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher; 
 
 public class ServerThread extends Thread {
-    Array a;
+    ThreadMap threadMap;
     ServerSocket server;// porta
     Socket client;// socket su cui ci andremo a collegare
-    String stringa; // stringa ricevuta dal client
+    String messaggio; // stringa ricevuta dal client
     BufferedReader inDalClient;// lettura stream dal client
     DataOutputStream outVersoClient;// output stream verso client
     String NomeClient;
 
-    public ServerThread(Socket socket, ServerSocket serverSocket, Array a) {
+    public ServerThread(Socket socket, ServerSocket serverSocket, ThreadMap threadMap) {
         this.client = socket;
         this.server = serverSocket;
-        this.a = a;
+        this.threadMap = threadMap;
     }
 
     public void run() {
         try {
             connetti();
             comunica();
-
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }
@@ -32,43 +33,55 @@ public class ServerThread extends Thread {
 
         inDalClient = new BufferedReader(new InputStreamReader(client.getInputStream()));// lettura dello stream dal client
         outVersoClient = new DataOutputStream(client.getOutputStream());// invio dello stream verso il client
-        do{
+        NomeClient = inDalClient.readLine();
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(NomeClient);
+        
+        while(m.find()){
+            outVersoClient.writeBytes("[Server] : Username contenente simboli non accettabili, provane un'altro" + '\n');
             NomeClient = inDalClient.readLine();
-        }while(a.aggiungiClient(NomeClient));
-        stringa = a.lista(NomeClient);
-    }
+            m = p.matcher(NomeClient);
+        }
 
-    public void comunicazione(){    
+        while(threadMap.aggiungiClient(NomeClient,this)!=null){
+            outVersoClient.writeBytes("[Server] : Username già occupato, provane un'altro" + '\n');
+            NomeClient = inDalClient.readLine();
+        }
 
-
+        outVersoClient.writeBytes(threadMap.lista(NomeClient) + '\n');
     }
 
     public void comunica() throws Exception {// comunicazione con il client
-        for (;;) {
-            stringa = inDalClient.readLine();// lettura stringa proveniente dal client
-
+        while (messaggio!="ABBANDONA") {
             
-            if (stringa.equals("FINE") || stringa.equals("STOP")) {
-                outVersoClient.writeBytes(stringa + " (=> server in chiusura...)" + '\n');// invio della stringa di risposta
-                System.out.println("Echo sul sever in chiusura :" + stringa);
-                client.close();
+            messaggio = inDalClient.readLine();// lettura stringa proveniente dal client
+            switch(messaggio.charAt(0)){
+                case 'A':
+                    threadMap.rimuoviClient(NomeClient, this);
                 break;
-            } else {
 
-                outVersoClient.writeBytes(stringa.toUpperCase() + " (ricevuta e ritrasmessa)" + '\n');
-                System.out.println("6 Echo sul server :" + stringa.toUpperCase());
+                case 'G':
+                threadMap.messaggioGlobale(NomeClient, messaggio);
+                break;
+
+                case 'P':
+                    String[] parti = messaggio.split(" ", 3);
+                    threadMap.messaggioPrivato(NomeClient, parti[1], parti[2]);
+                break;
 
             }
         }
         
-        /*
         outVersoClient.close();
         inDalClient.close();
-        System.out.println("9 Chiusura socket" + client);
         client.close();
-        if(stringaRicevuta.equals("STOP")){
-            server.close();
-            a.stoppa();
-        }*/
+    }
+
+    public void spedisci(String messaggio){    
+        try {
+            outVersoClient.writeBytes(messaggio + '\n');
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
