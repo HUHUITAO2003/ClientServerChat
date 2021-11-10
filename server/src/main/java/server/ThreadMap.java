@@ -19,7 +19,7 @@ public class ThreadMap {
     }
     
     public String lista(String nome){
-        String listaclient="L:// ";
+        String listaclient="[Lista]; ";
         for(String i : threadsMap.keySet()){
             if(i==nome)
                 continue;
@@ -29,7 +29,7 @@ public class ThreadMap {
     }
 
     public void messaggioGlobale(String nome, String messaggio){
-        if(threadsMap.size()==1){
+        if(threadsMap.size()==2){
             threadsMap.get(nome).spedisci("[Server] : Sei l'unico connesso");
         }
         for(String i : threadsMap.keySet()){

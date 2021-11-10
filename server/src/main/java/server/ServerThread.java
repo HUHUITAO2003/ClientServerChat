@@ -47,7 +47,7 @@ public class ServerThread extends Thread {
             outVersoClient.writeBytes("[Server] : Username già occupato, provane un'altro" + '\n');
             NomeClient = inDalClient.readLine();
         }
-
+        outVersoClient.writeBytes("[Server] : Scelta username completato" + '\n');
         outVersoClient.writeBytes(threadMap.lista(NomeClient) + '\n');
     }
 
