@@ -25,15 +25,17 @@ public class ClientPrinter implements Runnable {
                     //System.out.println("invio del messaggio pubblico:" + stringaUtente);
                     outVersoServer.writeBytes(stringaUtente + '\n');// invio della stringa
                 }
-                if( stringaUtente.indexOf("P")==0  || stringaUtente.indexOf("")==1)
+                else if( stringaUtente.indexOf("P")==0  || stringaUtente.indexOf("")==1)
                 {
                     //System.out.println("invio del messaggio privato:" + stringaUtente);
                     outVersoServer.writeBytes(stringaUtente + '\n');// invio della stringa
                 }
-
-                if(stringaUtente.equals("ABBANDONA"))
+                else if(stringaUtente.equals("ABBANDONA"))
                 {
-                   miosocket.close();
+                    outVersoServer.writeBytes(stringaUtente + '\n');
+                    miosocket.close();
+                }else{
+                    System.out.println("[Server] Sintassi Errata.");
                 }
             }catch (Exception e) {
                 System.out.println(e.getMessage());

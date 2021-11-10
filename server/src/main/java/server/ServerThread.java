@@ -2,8 +2,6 @@ package server;
 
 import java.io.*;
 import java.net.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher; 
 
 public class ServerThread extends Thread {
     ThreadMap threadMap;
@@ -33,45 +31,57 @@ public class ServerThread extends Thread {
 
         inDalClient = new BufferedReader(new InputStreamReader(client.getInputStream()));// lettura dello stream dal client
         outVersoClient = new DataOutputStream(client.getOutputStream());// invio dello stream verso il client
-        NomeClient = inDalClient.readLine();
-        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-        Matcher m = p.matcher(NomeClient);
-        
-        while(m.find()){
-            outVersoClient.writeBytes("[Server] : Username contenente simboli non accettabili, provane un'altro" + '\n');
+        String risultato;
+        do{
             NomeClient = inDalClient.readLine();
-            m = p.matcher(NomeClient);
-        }
+            risultato = threadMap.aggiungiClient(NomeClient, this);
+            if(risultato.equals("simboli")){
+                outVersoClient.writeBytes("[Server] : Username contenente simboli non accettabili, provane un'altro" + '\n');
+            }
+            if(risultato.equals("esistente")){
+                outVersoClient.writeBytes("[Server] : Username già occupato, provane un'altro" + '\n');
+            }
+            
+        }while(!risultato.equals("successo"));
 
-        while(threadMap.aggiungiClient(NomeClient,this)!=null){
-            outVersoClient.writeBytes("[Server] : Username già occupato, provane un'altro" + '\n');
-            NomeClient = inDalClient.readLine();
-        }
+
         outVersoClient.writeBytes("[Server] : Scelta username completato" + '\n');
-        outVersoClient.writeBytes(threadMap.lista(NomeClient) + '\n');
+        threadMap.aggiornamentoLista();
     }
 
     public void comunica() throws Exception {// comunicazione con il client
-        while (messaggio!="ABBANDONA") {
-            
+        do {
             messaggio = inDalClient.readLine();// lettura stringa proveniente dal client
             switch(messaggio.charAt(0)){
                 case 'A':
                     threadMap.rimuoviClient(NomeClient, this);
+                    System.out.println("Disconessione di "+ client);
                 break;
 
                 case 'G':
-                threadMap.messaggioGlobale(NomeClient, messaggio);
+                    if(messaggio.split(" ")[0].equals("G") && messaggio.split(" ").length==1){
+                        messaggio="G [messaggio vuoto]";
+                    }
+                    threadMap.messaggioGlobale(NomeClient, "[Globale] "+NomeClient+" : "+messaggio.substring(2));
                 break;
 
                 case 'P':
                     String[] parti = messaggio.split(" ", 3);
+                    if(parti.length<2){
+                        outVersoClient.writeBytes("[Server] : Utente mancante" + '\n');
+                        break;
+                    }
+                    if(parti.length<3){
+                        parti = new String [] {parti[0],parti[1],"[messaggio vuoto]"};
+                    }
                     threadMap.messaggioPrivato(NomeClient, parti[1], parti[2]);
                 break;
 
+                default:
+                    outVersoClient.writeBytes("[Server] : Sintassi errata1" + '\n');
+                break;
             }
-        }
-        
+        }while (!messaggio.equals("ABBANDONA"));
         outVersoClient.close();
         inDalClient.close();
         client.close();

@@ -12,7 +12,6 @@ public class ClientMain {
     public static void main(String[] args) {
         Client cliente = new Client();//istanza client
         cliente.connetti();//connessione al server
-        cliente.comunica();//comunicazione con il server
     }
     
 }

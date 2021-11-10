@@ -16,13 +16,17 @@ public class ClientListener implements Runnable {
     }
 
     public void run() {
-        while (miosocket.isConnected() == true) {
+        while (!miosocket.isClosed()) {
             try {
                 stringaRicevutaDalServer = inDalServer.readLine();
-                System.out.println(stringaRicevutaDalServer);
+                if (stringaRicevutaDalServer.indexOf("L") == 1 && stringaRicevutaDalServer.indexOf("[") == 0 ) {
+                    nomi = stringaRicevutaDalServer.split(";");// serve per diveder le string dopo il carattere(split array)
+                    for (int i = 0; i < nomi.length; i++) {
+                        System.out.println(nomi[i]);
+                    }
+                }else{System.out.println(stringaRicevutaDalServer);}
             }catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.out.println("Errore durante la comunicazione con il server!2");
+                System.out.println("Hai abbandonato la chat");
                 System.exit(1);
             }
         }
