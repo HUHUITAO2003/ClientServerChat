@@ -47,7 +47,7 @@ public class Client {
 */
             do {
                 g.ricevere("scrivi il tuo nome utente");
-                stringaUtente = tastiera.readLine()
+                stringaUtente = tastiera.readLine();
                 wait();
                 outVersoServer.writeBytes(stringaUtente + '\n');// invio della stringa
                 stringaRicevutaDalServer = inDalServer.readLine();
