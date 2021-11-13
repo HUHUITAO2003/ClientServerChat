@@ -6,8 +6,8 @@ import java.net.Socket;
 public class ClientPrinter implements Runnable {
     DataOutputStream outVersoServer;// stream output
     BufferedReader tastiera;// buffered per memorizzare la stringa ottenuta da tastiera
-    String stringaUtente;// stringa inserita dal client
     Socket miosocket;
+    String stringaUtente;
     
     public ClientPrinter(DataOutputStream outVersoServer,BufferedReader tastiera, Socket miosocket)  {
         this.outVersoServer = outVersoServer;
@@ -19,7 +19,8 @@ public class ClientPrinter implements Runnable {
 
         while (miosocket.isConnected()==true) {
             try {
-                stringaUtente = tastiera.readLine();// input tastiera
+                wait();
+                stringaUtente=Client.stringaUtente;
                 if( stringaUtente.indexOf("G")==0 || stringaUtente.indexOf("")==1)
                 {
                     //System.out.println("invio del messaggio pubblico:" + stringaUtente);
