@@ -1,8 +1,6 @@
 package server;
 
 import java.util.HashMap;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher; 
 
 public class ThreadMap {
     
@@ -12,11 +10,6 @@ public class ThreadMap {
     }
 
     public String aggiungiClient(String nome, ServerThread serverThread){
-        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-        Matcher m = p.matcher(nome);
-        if(m.find()){
-            return "simboli";
-        }
         if(threadsMap.putIfAbsent(nome, serverThread)!=null)
         return "esistente";
 

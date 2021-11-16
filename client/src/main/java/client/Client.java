@@ -14,7 +14,7 @@ public class Client {
     BufferedReader inDalServer;// stream input
     String[] nomi;
     Thread listener;
-    Thread printer;
+    //Thread printer;
     Grafica g;
 
     public Client(Grafica g){
@@ -45,6 +45,7 @@ public class Client {
                 }
             } while (!stringaUtente.equalsIgnoreCase("si"));
 */
+/*
             do {
                 g.ricevere("scrivi il tuo nome utente");
                 stringaUtente = tastiera.readLine();
@@ -55,7 +56,7 @@ public class Client {
             } while (!stringaRicevutaDalServer.equals("[Server] : Scelta username completato"));
 
             comunica();
-
+*/
         } catch (UnknownHostException e) {
             System.err.println("Host sconosciuto");
         } catch (Exception e) {
@@ -68,9 +69,27 @@ public class Client {
     }
 
     public void comunica() {// comunicazione con il server
-        listener = new Thread(new ClientListener(inDalServer, miosocket));
-        printer = new Thread(new ClientPrinter(outVersoServer, tastiera, miosocket));
+        listener = new Thread(new ClientListener(inDalServer, miosocket, g));
+        //printer = new Thread(new ClientPrinter(outVersoServer, tastiera, miosocket));
         listener.start();
-        printer.start();
+        //printer.start();
+    }
+
+    public String username(String username) {// comunicazione con il server
+        try {
+            outVersoServer.writeBytes(username + '\n');
+            stringaRicevutaDalServer = inDalServer.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringaRicevutaDalServer;
+    }
+
+    public void invia(String messaggio){
+        try {
+            outVersoServer.writeBytes(messaggio + '\n');
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

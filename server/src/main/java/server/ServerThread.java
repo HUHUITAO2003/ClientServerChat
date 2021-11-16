@@ -33,15 +33,17 @@ public class ServerThread extends Thread {
         outVersoClient = new DataOutputStream(client.getOutputStream());// invio dello stream verso il client
         String risultato;
         do{
+            risultato=null;
             NomeClient = inDalClient.readLine();
             risultato = threadMap.aggiungiClient(NomeClient, this);
             if(risultato.equals("simboli")){
                 outVersoClient.writeBytes("[Server] : Username contenente simboli non accettabili, provane un'altro" + '\n');
+                System.out.println("[Server] : Username contenente simboli non accettabili, provane un'altro");
             }
             if(risultato.equals("esistente")){
                 outVersoClient.writeBytes("[Server] : Username già occupato, provane un'altro" + '\n');
+                System.out.println("[Server] : Username già occupato, provane un'altro");
             }
-            
         }while(!risultato.equals("successo"));
 
 
@@ -89,7 +91,7 @@ public class ServerThread extends Thread {
 
     public void spedisci(String messaggio){    
         try {
-            outVersoClient.writeBytes(messaggio + '\n');
+                outVersoClient.writeBytes(messaggio + '\n');
         } catch (IOException e) {
             e.printStackTrace();
         }

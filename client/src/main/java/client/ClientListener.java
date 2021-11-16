@@ -8,24 +8,26 @@ public class ClientListener implements Runnable {
     BufferedReader inDalServer;// stream input
     String[] nomi;
     Socket miosocket;
+    Grafica g;
 
-    public ClientListener(BufferedReader inDalServer,Socket miosocket){
+    public ClientListener(BufferedReader inDalServer,Socket miosocket, Grafica g){
         this.inDalServer = inDalServer;
         this.nomi=new String[0];//vettore
         this.miosocket=miosocket;
+        this.g=g;
     }
 
     public void run() {
         while (!miosocket.isClosed()) {
             try {
                 stringaRicevutaDalServer = inDalServer.readLine();
-                if (stringaRicevutaDalServer.indexOf("L") == 1 && stringaRicevutaDalServer.indexOf("[") == 0 ) {
+                System.out.println(stringaRicevutaDalServer);
+                /*if (stringaRicevutaDalServer.indexOf("L") == 1 && stringaRicevutaDalServer.indexOf("[") == 0 ) {
                     nomi = stringaRicevutaDalServer.split(";");// serve per diveder le string dopo il carattere(split array)
-                    for (int i = 0; i < nomi.length; i++) {
-                        System.out.println(nomi[i]);
-                    }
-                }else{System.out.println(stringaRicevutaDalServer);}
+                    g.lista(nomi);
+                }else{*/g.ricevere(stringaRicevutaDalServer);
             }catch (Exception e) {
+                System.out.println(e);
                 System.out.println("Hai abbandonato la chat");
                 System.exit(1);
             }

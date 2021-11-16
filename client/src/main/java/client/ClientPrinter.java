@@ -19,6 +19,7 @@ public class ClientPrinter implements Runnable {
 
         while (miosocket.isConnected()==true) {
             try {
+                /*
                 wait();
                 stringaUtente=Client.stringaUtente;
                 if( stringaUtente.indexOf("G")==0 || stringaUtente.indexOf("")==1)
@@ -37,7 +38,7 @@ public class ClientPrinter implements Runnable {
                     miosocket.close();
                 }else{
                     System.out.println("[Server] Sintassi Errata.");
-                }
+                }*/
             }catch (Exception e) {
                 System.out.println(e.getMessage());
                 System.out.println("Errore durante la comunicazione con il server!1");
