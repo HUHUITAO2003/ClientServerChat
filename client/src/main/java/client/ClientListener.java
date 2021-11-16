@@ -22,6 +22,9 @@ public class ClientListener implements Runnable {
             try {
                 stringaRicevutaDalServer = inDalServer.readLine();
                 System.out.println(stringaRicevutaDalServer);
+                if(stringaRicevutaDalServer.contains("Privato")){
+                    System.out.println(stringaRicevutaDalServer);
+                }
                 /*if (stringaRicevutaDalServer.indexOf("L") == 1 && stringaRicevutaDalServer.indexOf("[") == 0 ) {
                     nomi = stringaRicevutaDalServer.split(";");// serve per diveder le string dopo il carattere(split array)
                     g.lista(nomi);

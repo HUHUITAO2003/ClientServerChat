@@ -3,7 +3,6 @@ package client;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 import java.util.regex.Pattern;
 import java.util.ArrayList;
@@ -14,20 +13,12 @@ public class Grafica extends JFrame {
     JButton invia = new JButton("Conferma");
     Container c = new Container();
       
-    JPanel home = new JPanel(new GridLayout(999, 1, 10, 5));
+    JPanel home = new JPanel(new GridLayout(99, 1, 10, 5));
 
     JPanel chat = new JPanel();
     JLabel titolo = new JLabel();
-    // JPanel con = new JPanel();
     JTextField inserimento = new JTextField();
-    // DefaultListModel<JLabel> modello = new DefaultListModel<>();
-    // JList<JLabel> cronologia = new JList<JLabel>();
     Client cliente = new Client(this);// istanza client
-    String regole = "regole per la comunicazione: " + '\n' + "1:mandare immediatamente l'username(a-z,0-9 senza spazi)"
-            + '\n' + "2:Per mandare un messaggio pubblico usa G e premere spazio,dopo averlo fatto scrvi il messaggio"
-            + '\n'
-            + "3:Per mandare un messaggio privato usa P e premere spazio,dopo averlo devi inserire il nome utente del mittente e poi premere di nuovo spazio,dopo la pressione del secondo spazio puoi scrivere il messaggio"
-            + '\n' + "4:per lasciare la chat si usa la parola ABBANDONA" + '\n' + "Scegli il tuo username ..." + '\n';
     JTextArea textArea = new JTextArea();
     HashMap<String, ArrayList<String>> cronologie = new HashMap<String, ArrayList<String>>();
     
@@ -38,12 +29,11 @@ public class Grafica extends JFrame {
         super(nome);
         c = this.getContentPane();
         chat.setLayout(new BorderLayout());
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(350, 500);
         cronologie.put("Globale", new ArrayList<String>());
-        cronologie.get("Globale").add(regole);
+        cronologie.get("Globale").add("Scegli il tuo username ..." + '\n');
         Bottoni bottone = new Bottoni("Globale");
         bottone.addMouseListener(new EventoMouse());
         home.add(bottone);
@@ -92,8 +82,9 @@ public class Grafica extends JFrame {
 
     public void lista(String[] lista) {
         for (int i = 0; i < lista.length-1; i++) {
-            if (!cronologie.containsKey(lista[i]) || lista[i].equals(titolo.getText()) || lista[i].contains("[Lista]")) {
+            if (!cronologie.containsKey(lista[i]) && !lista[i].contains("[Lista]")) {
                 cronologie.put(lista[i], new ArrayList<String>());
+                cronologie.get(lista[i]).add("[Server] : Ora potete iniziare a chattare" + '\n');
                 Bottoni bottone = new Bottoni(lista[i]);
                 bottone.addMouseListener(new EventoMouse());
                 home.add(bottone);
@@ -122,12 +113,12 @@ public class Grafica extends JFrame {
             }
         }
         if(controllo[0].equals("[Lista];")){
-            cronologie.get("Globale").add(messaggio + '\n');
             lista(messaggio.split(";"));
         }
         if(controllo[0].equals("[Privato]")){
-            cronologie.get(controllo[1]).add(controllo[1]+" "+controllo[2] + '\n');
-            if(titolo.getText().equals(controllo[1])){
+            System.out.println(controllo[1]+"h"+titolo.getText()+"h");
+            cronologie.get(" "+controllo[1]).add(controllo[1]+" "+controllo[2] + '\n');
+            if(titolo.getText().equals(" "+controllo[1])){
                 textArea.append(controllo[1] +" "+controllo[2]+'\n');
             }
         }
@@ -169,7 +160,6 @@ public class Grafica extends JFrame {
                     cliente.invia("G "+messaggio);
                 }else{
                     cliente.invia("P" + titolo.getText() + " "+ messaggio);
-                    System.out.println("P" + titolo.getText() + " "+ messaggio+'\n');
                 }
                 
                 break;

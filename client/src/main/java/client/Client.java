@@ -87,7 +87,13 @@ public class Client {
 
     public void invia(String messaggio){
         try {
+            if(messaggio.split(" ")[messaggio.split(" ").length-1].equals("ABBANDONA"))
+                {
+                    outVersoServer.writeBytes("ABBANDONA" + '\n');
+                    miosocket.close();
+                }else{
             outVersoServer.writeBytes(messaggio + '\n');
+                }
         } catch (IOException e) {
             e.printStackTrace();
         }
