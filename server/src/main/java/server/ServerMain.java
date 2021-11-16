@@ -10,8 +10,8 @@ public class ServerMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        MultiServer topServer = new MultiServer();//istanza multiserver
-        topServer.start();
+        MultiServer tcpServer = new MultiServer();//istanza multiserver per gestione di più client
+        tcpServer.start();
     }
     
 }
