@@ -1,0 +1,55 @@
+Protocollo chat
+
+legenda:
+chat: con il termine chat intendiamo che queste operazioni possono
+avvenire in ordine sparso e ciclico durante la comunicazione
+ABBANDONA [Abbandona]: abbandona la chat
+[Lista]: Lista dei partecipanti
+G [Globale]: messaggio Globale
+P [Privato]: messaggio Privato
+[Server]: notifica/avvertimento
+p.s. i comandi G e P verranno effettuati autonomamente dal
+programma, che dedurrà che tipo di messaggio inviare da dove è
+stato inviato il messaggio
+Server(Angelo)
+Apertura
+1)si mette in ascolto alla porta=6789, e attende la connessione da
+parte di un client
+4)Richiesta bloccante: il server fa un controllo se l’username è già
+esistente,se così fosse il server manda un messaggio di ripetizione
+della username (che termina con \n).
+e il client riparte dal punto 3, altrimenti lo aggiunge alla lista dei
+partecipanti.
+5)manda la lista dei partecipanti al client appena connesso(che
+termina con \n).
+Chat
+chat)il server riceve il messaggio dal client, inoltrando agli altri client
+a parte di quello che lo ha inviato, se è connesso solo un client il
+server notificherà al l’unico client connesso che è presente solo lui
+(sapendo che terminano \n)
+chiusura
+
+2) ricevendo il messaggio “ABBANDONA”, rimuove il client che ha
+mandato il messaggio dalla lista dei partecipanti e lo notifica a tutti
+gli altri client nella lista dei partecipanti.
+
+Client(pellegrini)
+Apertura
+2)connessione al server alla porta=6789
+3)inizia la comunicazione inviando il proprio username al server (la
+stringa termina con \n)
+6)il client riceve la stringa(che termina con \n)degli username
+connessi, divisi con un ;
+Chat
+chat) e adesso può mandare i messaggi verso il server(i messaggi
+terminano con \n)
+chat)il client(non mittente) riceve il messaggio inoltrato dal server
+proveniente dal client mittente,se è l’unico connesso riceverà un
+messaggio di avvertimento(sapendo che terminano \n)
+chat) si potrebbe ricevere un messaggio di avviso se un client ha
+abbandonato la chat.
+
+chiusura
+1)il client vuole chiudere la comunicazione verso il
+server(abbandonando la chat) e per farlo manda il messaggio:
+“ABBANDONA”(sapendo che terminano \n)
