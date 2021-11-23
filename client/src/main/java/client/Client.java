@@ -10,11 +10,11 @@ public class Client {
     String stringaRicevutaDalServer;// stringa ricevuta dal server
     DataOutputStream outVersoServer;// stream output
     BufferedReader inDalServer;// stream input
-    Thread listener;//thread per ricezione dei messaggi
-    Grafica g;//grafica GUI
+    Thread listener;// thread per ricezione dei messaggi
+    Grafica g;// grafica GUI
 
-    public Client(Grafica g){
-        this.g=g;
+    public Client(Grafica g) {
+        this.g = g;
     }
 
     public Socket connetti() {// metodo per connetterci al server
@@ -22,7 +22,8 @@ public class Client {
             miosocket = new Socket(nomeServer, portaServer);// creazione socket con indirizzo e porta
 
             outVersoServer = new DataOutputStream(miosocket.getOutputStream());// istanza per output verso al server
-            inDalServer = new BufferedReader(new InputStreamReader(miosocket.getInputStream()));// istanza per input dal server
+            inDalServer = new BufferedReader(new InputStreamReader(miosocket.getInputStream()));// istanza per input dal
+                                                                                                // server
 
         } catch (UnknownHostException e) {
             System.err.println("Host sconosciuto");
@@ -36,7 +37,7 @@ public class Client {
     }
 
     public void comunica() {// comunicazione con il server
-        listener = new Thread(new ClientListener(inDalServer, miosocket, g));//istanza listener 
+        listener = new Thread(new ClientListener(inDalServer, miosocket, g));// istanza listener
         listener.start();
     }
 
@@ -50,18 +51,22 @@ public class Client {
         return stringaRicevutaDalServer;
     }
 
-    public void invia(String messaggio){ //invio messaggio al server
+    public void invia(String messaggio) { // invio messaggio al server
         try {
-            if(messaggio.split(" ")[messaggio.split(" ").length-1].equals("ABBANDONA"))//controllo se si vuole abbandonare 
-                {
-                    g.ricevere("Hai abbandonato la chat"+'\n');
-                    outVersoServer.writeBytes("ABBANDONA" + '\n');
-                    miosocket.close();
-                }else{
-            outVersoServer.writeBytes(messaggio + '\n');
-                }
+                outVersoServer.writeBytes(messaggio + '\n');
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void abbandona() { // invio messaggio al server
+        try {
+            g.ricevere("Hai abbandonato la chat" + '\n');
+            outVersoServer.writeBytes("ABBANDONA" + '\n');
+            miosocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

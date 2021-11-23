@@ -13,10 +13,10 @@ public class Grafica extends JFrame {
     JButton invia = new JButton("Scegli");//bottone per scelta username e invio messaggio
     Container c = new Container();
       
-    JPanel home = new JPanel(new GridLayout(99, 1, 10, 5));//panello per la grafica delle home che rappresenta tutte le chat
+    JPanel home = new JPanel(new GridLayout(0, 1, -5, -5));//panello per la grafica delle home che rappresenta tutte le chat
 
     JPanel chat = new JPanel();//pannello per la grafica della chat
-    JLabel titolo = new JLabel();//titolo della chat in cui ci troviamo
+    JLabel titolo = new JLabel("Globale");//titolo della chat in cui ci troviamo
     JTextField inserimento = new JTextField();//barra di inserimento username e messaggio
     Client cliente = new Client(this);// istanza client
     JTextArea textArea = new JTextArea();
@@ -29,9 +29,9 @@ public class Grafica extends JFrame {
         super(nome);
         c = this.getContentPane();
         chat.setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
-        setSize(350, 500);
+        setSize(830, 500);
         setResizable(false);
 
         cronologie.put("Globale", new ArrayList<String>());//schermata iniziale con solo il gruppo globale
@@ -40,20 +40,39 @@ public class Grafica extends JFrame {
 
         bottone.addMouseListener(new EventoMouse());
         home.add(bottone);
+        home.setPreferredSize(new Dimension(100,460));
         c.add(jScrollPane);
         chat("Globale");
+        for (int i = 0; i < cronologie.get("Globale").size(); i++) {
+            textArea.append(cronologie.get("Globale").get(i));
+        }
+        revalidate();
+        repaint();
+        c.add(chat, BorderLayout.EAST);
         setVisible(true);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (JOptionPane.showConfirmDialog(new JPanel(), 
+                    "Sei sicuro di voler abbandonare la chat?", "Abbandonare la chat?", 
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                    cliente.abbandona();
+                    System.exit(0);
+                }
+            }
+        });
         cliente.connetti();// connessione al server
     }
 
     public void chat(String nome) {//creazione pannello chat
         JPanel toppanel = new JPanel();//pannello superiore con tasto per tornare alla home e  il nome della chat
-        JButton redo = new JButton("<");
-        redo.setPreferredSize(new Dimension(20, 20));
-        redo.addMouseListener(new EventoMouse());
-        titolo.setPreferredSize(new Dimension(300, 30));
-        toppanel.add(redo, BorderLayout.NORTH);
-        toppanel.add(titolo, BorderLayout.AFTER_LINE_ENDS);
+        //JButton redo = new JButton("<");
+        //redo.setPreferredSize(new Dimension(20, 20));
+        //redo.addMouseListener(new EventoMouse());
+        titolo.setPreferredSize(new Dimension(500, 30));
+        //toppanel.add(redo, BorderLayout.NORTH);
+        toppanel.add(titolo);
 
         textArea.setLineWrap(true);//parte centrale con i messaggi
         textArea.setEditable(false);
@@ -61,7 +80,7 @@ public class Grafica extends JFrame {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         invia.setPreferredSize(new Dimension(80, 30));//parte inferiore con barra di inserimento e pulsante invio
-        inserimento.setPreferredSize(new Dimension(250, 30));
+        inserimento.setPreferredSize(new Dimension(500, 30));
         invia.addMouseListener(new EventoMouse());
         JPanel bottompanel = new JPanel();
         bottompanel.add(inserimento, BorderLayout.SOUTH);
@@ -70,6 +89,7 @@ public class Grafica extends JFrame {
         chat.add(toppanel, BorderLayout.NORTH);//aggiunta componenti al pannello chat
         chat.add(scrollPane, BorderLayout.CENTER);
         chat.add(bottompanel, BorderLayout.SOUTH);
+        chat.setPreferredSize(new Dimension(600,500));
     }
 
     public void lista(String[] lista) {//creazione di bottone e cronologia per ogni nuovo client
@@ -153,19 +173,18 @@ public class Grafica extends JFrame {
                 }
                 
                 break;
-
+/*
             case "<"://tasto per tornare nella home
                 textArea.setText("");
                 c.removeAll();
                 c.add(jScrollPane);
                 revalidate();
                 repaint();
-                break;
+                break;*/
 
             default://tasto per scegliere in quale chat entrare
-                c.removeAll();
                 titolo.setText(evento.getText());
-                c.add(chat);
+                textArea.setText("");
                 for (int i = 0; i < cronologie.get(evento.getText()).size(); i++) {
                     textArea.append(cronologie.get(evento.getText()).get(i));
                 }
