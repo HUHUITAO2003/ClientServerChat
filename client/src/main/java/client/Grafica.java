@@ -12,40 +12,45 @@ import java.util.regex.Matcher;
 public class Grafica extends JFrame {
     JButton invia = new JButton("Scegli");//bottone per scelta username e invio messaggio
     Container c = new Container();
-      
     JPanel home = new JPanel(new GridLayout(0, 1, -5, -5));//panello per la grafica delle home che rappresenta tutte le chat
-
     JPanel chat = new JPanel();//pannello per la grafica della chat
     JLabel titolo = new JLabel("Globale");//titolo della chat in cui ci troviamo
     JTextField inserimento = new JTextField();//barra di inserimento username e messaggio
     Client cliente = new Client(this);// istanza client
     JTextArea textArea = new JTextArea();
     HashMap<String, ArrayList<String>> cronologie = new HashMap<String, ArrayList<String>>();//HashMap contenente la cronologie con tutti i client
-    
-    JScrollPane jScrollPane = new JScrollPane(home, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
+    JScrollPane j = new JScrollPane(home);
+    /*JScrollPane jScrollPane = new JScrollPane(home, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);*/
+    HashMap<String, JButton> listabottoni = new HashMap<String, JButton>();
+    ArrayList<JButton> a = new ArrayList<JButton>();
     public Grafica(String nome) {
         super(nome);
         c = this.getContentPane();
-        chat.setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(830, 500);
         setResizable(false);
 
+        chat.setLayout(new BorderLayout());
         cronologie.put("Globale", new ArrayList<String>());//schermata iniziale con solo il gruppo globale
         cronologie.get("Globale").add("1. Scegli uno username senza simboli speciali" + '\n' + "2. Scrivi ABBANDONA in una chat privata o globale se vuoi chiudere la chat" + '\n' + "Scegli il tuo username ..." + '\n');
         Bottoni bottone = new Bottoni("Globale");
-
         bottone.addMouseListener(new EventoMouse());
+        
+        j.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         home.add(bottone);
-        home.setPreferredSize(new Dimension(100,460));
-        c.add(jScrollPane);
+        listabottoni.put("Globale",bottone);
+        c.add(j);
         chat("Globale");
         for (int i = 0; i < cronologie.get("Globale").size(); i++) {
             textArea.append(cronologie.get("Globale").get(i));
         }
+        for(int i =0;i<9;i++){
+            Bottoni n = new Bottoni("haha");
+        home.add(n);
+        a.add(n);
+    }
         revalidate();
         repaint();
         c.add(chat, BorderLayout.EAST);
@@ -99,13 +104,28 @@ public class Grafica extends JFrame {
                 cronologie.get(lista[i]).add("[Server] : Ora potete iniziare a chattare" + '\n');
                 Bottoni bottone = new Bottoni(lista[i]);
                 bottone.addMouseListener(new EventoMouse());
-                home.add(bottone);
-            }
-            cronologie.get("Globale").add(lista[i] + '\n');
-            if(titolo.getText().equals("Globale")){
-                textArea.append(lista[i]+'\n');
+                //home.add(bottone);
+                ricevere("[Server] :"+lista[i]+"si è unito alla chat");
+                listabottoni.put(lista[i],bottone);
             }
         }
+        rinnovalista();
+        revalidate();
+        repaint();
+    }
+
+    public void rinnovalista(){
+        home.removeAll();
+        for(String i:listabottoni.keySet()){
+            home.add(listabottoni.get(i));
+        }
+        if(listabottoni.size()<11){
+            for(int i=0; i<10-listabottoni.size();i++){
+                home.add(a.get(i));
+            }
+        }
+        revalidate();
+        repaint();
     }
 
     public void ricevere(String messaggio) {//ricezione del messaggio
@@ -121,6 +141,12 @@ public class Grafica extends JFrame {
             cronologie.get("Globale").add(messaggio + '\n');
             if(titolo.getText().equals("Globale")){
                 textArea.append(messaggio+'\n');
+            }
+            if(messaggio.contains("lasciato la chat")){
+                 cronologie.remove(" "+controllo[2].split(" ")[0]);
+                 listabottoni.remove(" "+controllo[2].split(" ")[0]);
+                 System.out.println(listabottoni.toString());
+                rinnovalista();
             }
         }
         if(controllo[0].equals("[Lista];")){//lista dei partecipanti
@@ -156,7 +182,9 @@ public class Grafica extends JFrame {
                     ricevere("[Server] : Username vuoto" + '\n');
                 } else if (!m.find()) {
                     ricevere("[Server] : Username contenente simboli non accettabili, provane un'altro" + '\n');
-                } else {
+                } else if (nome.equals("Globale")){
+                    ricevere("[Server] : non puoi scegliere Globale come username");
+                }else {
                     ricevere(cliente.username(nome));
                 }
                 break;
@@ -171,7 +199,8 @@ public class Grafica extends JFrame {
                 }else{
                     cliente.invia("P" + titolo.getText() + " "+ messaggio);
                 }
-                
+                revalidate();
+                repaint();
                 break;
 /*
             case "<"://tasto per tornare nella home

@@ -21,7 +21,7 @@ public class ClientListener implements Runnable {
                 stringaRicevutaDalServer = inDalServer.readLine();//ascolto sull'inputstream
                 g.ricevere(stringaRicevutaDalServer);//spedizione del messaggio sulla GUI
             }catch (Exception e) {
-                System.out.println("Hai abbandonato la chat");
+                System.out.println("Hai abbandonato la chat ciao");
                 System.exit(1);
             }
         }
