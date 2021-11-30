@@ -34,7 +34,7 @@ public class Grafica extends JFrame {
 
         chat.setLayout(new BorderLayout());
         cronologie.put("Globale", new ArrayList<String>());//schermata iniziale con solo il gruppo globale
-        cronologie.get("Globale").add("1. Scegli uno username senza simboli speciali" + '\n' + "2. Scrivi ABBANDONA in una chat privata o globale se vuoi chiudere la chat" + '\n' + "Scegli il tuo username ..." + '\n');
+        cronologie.get("Globale").add("Scegli uno username senza simboli speciali ..." + '\n');
         Bottoni bottone = new Bottoni("Globale");
         bottone.addMouseListener(new EventoMouse());
         
@@ -105,7 +105,7 @@ public class Grafica extends JFrame {
                 Bottoni bottone = new Bottoni(lista[i]);
                 bottone.addMouseListener(new EventoMouse());
                 //home.add(bottone);
-                ricevere("[Server] :"+lista[i]+"si è unito alla chat");
+                ricevere("[Server] :"+lista[i]+" si è unito alla chat");
                 listabottoni.put(lista[i],bottone);
             }
         }
@@ -135,6 +135,8 @@ public class Grafica extends JFrame {
             cronologie.get("Globale").add(controllo[1] + " " +controllo[2]+'\n');
             if(titolo.getText().equals("Globale")){
                 textArea.append(controllo[1] + " " +controllo[2]+'\n');
+            }else{
+                JOptionPane.showMessageDialog(null,"messaggio proveniente da Globale");
             }
         }
         if(controllo[0].equals("[Server]")){//messaggi di avvertimento provenenti  dal server
@@ -156,9 +158,11 @@ public class Grafica extends JFrame {
             cronologie.get(" "+controllo[1]).add(controllo[1]+" "+controllo[2] + '\n');
             if(titolo.getText().equals(" "+controllo[1])){
                 textArea.append(controllo[1] +" "+controllo[2]+'\n');
+            }else{
+                JOptionPane.showMessageDialog(null,"messaggio proveniente da "+controllo[1]);
             }
         }
-
+       
         if (messaggio.equals("[Server] : Scelta username completato")) {//cambio del pulsante dopo scelta dello username 
             invia.setText("Invia");
             cliente.comunica();
